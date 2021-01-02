@@ -1,0 +1,46 @@
+{  
+"Rotation": [
+    "180",
+    "360",
+    "540"
+  ],
+"bTrick": [
+    "Kickflip",
+    "Heelflip",
+    "Shuvit"
+  ],
+"aTrick": [
+    "Hardflip",
+    "360 Shuvit",
+    "Tre Flip",
+    "Laser Heel",
+  ],
+"vaTrick": [
+    "Varial Flip",
+    "Varial Heel",
+    "Inward Flip", 
+    "Inward Heelflip"
+  ],
+"Mod1": [
+    "Fakie",
+    "Nollie",
+    "Switch"
+  ],
+"Mod2": [
+    "Frontside",
+    "Backside"
+  ],
+"Mod3": [
+    "Revert",
+    "To Manual",
+    "To Nose Manual"
+  ],
+"Mod4": [
+    "Double",
+    "Triple"
+  ],
+"Mod5": [
+    "Flip",
+    "Heel"
+  ]
+}

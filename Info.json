@@ -1,0 +1,7 @@
+﻿{
+  "Name": "RandomServerTricks",
+  "AssemblyName": "RandomServerTricks.dll",
+  "StartupMethod": "RandomServerTricks.Main:Load",
+  "ServerVersion": "0.11.2",
+  "DependencyZIP": ""
+}
