@@ -1,0 +1,13 @@
+{
+"basicTrickChance":"35",
+"advancedTrickChance":"50",
+"veryAdvancedTrickChance":"50",
+"mod1Chance":"50", //Switch-Fakie-Nollie 
+"mod2Chance":"85", //Revert-Manual-NoseManual
+"mod3Chance":"75", //DoubleTriple-Kickflip-Heelflip
+"genDelay":"20" //How many seconds between server trick generation
+}
+//Ranges are 1 to 100, anything else will screw things up. 
+//Default values generate "do-able" tricks, try playiong with the numbers, I'm sure something will break lol.
+//The lower the number, the higher the chance of it coming up. 
+//Private trick generation is limited to 7 because it likes to crash the server if you go over 10. Looking into fixing it.
