@@ -183,24 +183,24 @@ namespace RandomServerTricks
                         //figures out what a bigspin/biggerspin is
                         if (fourthSlot == "Laser Heel-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                         {
-                            fourthSlot = "Biggerflip-Heel-";
+                            fourthSlot = "Biggerspin-Heel-";
                         }
                         else
                         {
                             if (fourthSlot == "Laser Heel-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
-                                fourthSlot = "Biggerspin-Heel-";
+                                fourthSlot = "Bigspin-Heel-";
                             }
                         }
                         if (fourthSlot == "Tre Flip-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                         {
-                            fourthSlot = "Biggerflip";
+                            fourthSlot = "Biggerspin-Flip";
                         }
                         else
                         {
                             if (fourthSlot == "Tre Flip-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
-                                fourthSlot = "Biggerspin-Flip-";
+                                fourthSlot = "Bigspin-Flip-";
                             }
                         }
                         //the gazelle hypothesis
@@ -272,7 +272,7 @@ namespace RandomServerTricks
                 }
 
                 //corrects switch manuals, i think.
-                if (secondSlot == "180-" && (fifthSlot == "To Manual-" || fifthSlot == "To Nose Manual-")) {
+                if ((secondSlot == "180-" || firstSlot == "Fakie") && (fifthSlot == "To Manual-" || fifthSlot == "To Nose Manual-")) {
                     var tempFifthSlot = fifthSlot;
                     fifthSlot = "Switch " + tempFifthSlot.Substring(3);
                 }
