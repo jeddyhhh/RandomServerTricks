@@ -14,8 +14,9 @@ namespace RandomServerTricks
     {
         private static Plugin pluginInfo;
         private static readonly Stopwatch stopWatch = new Stopwatch();
-        private static string sep = Path.DirectorySeparatorChar.ToString();
-        private static string path = Directory.GetCurrentDirectory() + sep + "Plugins" + sep + "RandomServerTricks";
+        private static readonly string sep = Path.DirectorySeparatorChar.ToString();
+        private static readonly string path = Directory.GetCurrentDirectory() + sep + "Plugins" + sep + "RandomServerTricks";
+        private static readonly Random rnd = new Random();
 
         public static void Load(Plugin info)
         {
@@ -57,7 +58,6 @@ namespace RandomServerTricks
         {
             if (File.Exists(path + sep + "tricks.json"))
             {
-                Random rnd = new Random();
                 //reads tricks.json file and creates a object with the values loaded.
                 var myJsonString = File.ReadAllText(path + sep + "tricks.json");
                 var myJObject = JObject.Parse(myJsonString);
@@ -189,7 +189,7 @@ namespace RandomServerTricks
                         {
                             if (fourthSlot == "Laser Heel-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
-                                fourthSlot = "Bigspin-Heel-";
+                                fourthSlot = "Biggerspin-Heel-";
                             }
                         }
                         if (fourthSlot == "Tre Flip-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
@@ -200,7 +200,7 @@ namespace RandomServerTricks
                         {
                             if (fourthSlot == "Tre Flip-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
-                                fourthSlot = "Bigspin-Flip-";
+                                fourthSlot = "Biggerspin-Flip-";
                             }
                         }
                         //the gazelle hypothesis
@@ -241,10 +241,12 @@ namespace RandomServerTricks
                     {
                         fifthSlot = Mod3List[rnd.Next(0, Mod3L)].ToString() + "-";
                     }
-                    if (fifthSlot == "Revert-") {
-                        fifthSlot = Mod2List[rnd.Next(0, Mod2L)].ToString() + " Revert-";
-                    }
+                }
 
+                //give reverts a direction
+                if (fifthSlot == "180 Revert-")
+                {
+                    fifthSlot = Mod2List[rnd.Next(0, Mod2L)].ToString() + " 180 Revert-";
                 }
 
                 //correcting for biggerspin flip/heel
@@ -267,6 +269,12 @@ namespace RandomServerTricks
                 if (fourthSlot == "Frontside-Gazellespin-" || fourthSlot == "Backside-Gazellespin-" && fifthSlot == "Flip-") {
                     fifthSlot = "";
                     fourthSlot = fourthSlot.Replace("spin-", "flip-");
+                }
+
+                //corrects switch manuals, i think.
+                if (secondSlot == "180-" && (fifthSlot == "To Manual-" || fifthSlot == "To Nose Manual-")) {
+                    var tempFifthSlot = fifthSlot;
+                    fifthSlot = "Switch " + tempFifthSlot.Substring(3);
                 }
 
                 //compiles a final trick string
@@ -303,23 +311,23 @@ namespace RandomServerTricks
                             }
                         }
                         else if (isPrivate == true) {
-                            if (!File.Exists(path + sep + "trickLogPrivate.txt"))
-                            {
-                                File.AppendAllText(path + sep + "trickLogPrivate.txt", "Kickflip" + "\n");
-                            }
-                            var lastLine2 = File.ReadLines(path + sep + "trickLogPrivate.txt").Last();
-                            if (lastLine2 == ftM.ToString())
-                            {
-                                trickGenerator(sender, false);
-                                return true;
-                            }
-                            else
-                            {
+                            //if (!File.Exists(path + sep + "trickLogPrivate.txt"))
+                            //{
+                            //    File.AppendAllText(path + sep + "trickLogPrivate.txt", "Kickflip" + "\n");
+                            //}
+                            //var lastLine2 = File.ReadLines(path + sep + "trickLogPrivate.txt").Last();
+                            //if (lastLine2 == ftM.ToString())
+                            //{
+                            //    trickGenerator(sender, false);
+                            //    return true;
+                            //}
+                            //else
+                            //{
                                 pluginInfo.SendImportantMessageToPlayer("Private Trick: " + ftM.ToString(), 10, "2ff", sender.GetPlayer());
                                 //pluginInfo.SendImportantMessageToPlayer(basicTrickChance + "\n" + advancedTrickChance + "\n" + veryAdvancedTrickChance + "\n" + mod1Chance + "\n" + mod2Chance + "\n" + mod3Chance, 10, "2ff", sender.GetPlayer());
                                 //File.AppendAllText(path + sep + "trickLogPrivate.txt", ftM.ToString() + "\n");
                                 return true;
-                            } 
+                            //} 
                         }
                     }
                 }
@@ -377,7 +385,7 @@ namespace RandomServerTricks
                 int index = 0;
                 while (index < 7) {
                     trickGenerator(sender, true);
-                    System.Threading.Thread.Sleep(2000);
+                    System.Threading.Thread.Sleep(1000);
                     index++;
                 }
                 pluginInfo.SendImportantMessageToPlayer("Tricks Generated - Have Fun", 10, "f00", sender.GetPlayer());
