@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace RandomServerTricks
 {
@@ -82,6 +83,7 @@ namespace RandomServerTricks
                 var mod1Chance = Int16.Parse(myJObject2["mod1Chance"].ToString());
                 var mod2Chance = Int16.Parse(myJObject2["mod2Chance"].ToString());
                 var mod3Chance = Int16.Parse(myJObject2["mod3Chance"].ToString());
+                
 
                 //counts entries within catagories
                 var rL = rotationList.Count;
@@ -180,7 +182,7 @@ namespace RandomServerTricks
                     {
                         fourthSlot = aTrickList[rnd.Next(0, aTL)].ToString() + "-";
 
-                        //figures out what a bigspin/biggerspin is
+                        //figures out what a bigspin/biggerspin is - probably wrong
                         if (fourthSlot == "Laser Heel-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                         {
                             fourthSlot = "Biggerspin-Heel-";
@@ -189,18 +191,18 @@ namespace RandomServerTricks
                         {
                             if (fourthSlot == "Laser Heel-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
-                                fourthSlot = "Bigspin-Heel-";
+                                fourthSlot = "Biggerspin-Heel-";
                             }
                         }
                         if (fourthSlot == "Tre Flip-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                         {
-                            fourthSlot = "Biggerspin-Flip";
+                            fourthSlot = "360 Hardflip-";
                         }
                         else
                         {
                             if (fourthSlot == "Tre Flip-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
-                                fourthSlot = "Bigspin-Flip-";
+                                fourthSlot = "Biggerspin-Flip-";
                             }
                         }
                         //the gazelle hypothesis
@@ -241,6 +243,17 @@ namespace RandomServerTricks
                     {
                         fifthSlot = Mod3List[rnd.Next(0, Mod3L)].ToString() + "-";
                     }
+                }
+
+                //TRICK CORRECTIONS
+
+                //ghetto birds
+                if (firstSlot == "Fakie-" && secondSlot == "Backside-" && thirdSlot == "180-" && fourthSlot == "Hardflip-") {
+                    firstSlot = "";
+                    secondSlot = "";
+                    thirdSlot = "";
+                    fourthSlot = "Ghetto Bird";
+                    fifthSlot = "";
                 }
 
                 //give reverts a direction
@@ -311,23 +324,8 @@ namespace RandomServerTricks
                             }
                         }
                         else if (isPrivate == true) {
-                            //if (!File.Exists(path + sep + "trickLogPrivate.txt"))
-                            //{
-                            //    File.AppendAllText(path + sep + "trickLogPrivate.txt", "Kickflip" + "\n");
-                            //}
-                            //var lastLine2 = File.ReadLines(path + sep + "trickLogPrivate.txt").Last();
-                            //if (lastLine2 == ftM.ToString())
-                            //{
-                            //    trickGenerator(sender, false);
-                            //    return true;
-                            //}
-                            //else
-                            //{
                                 pluginInfo.SendImportantMessageToPlayer("Private Trick: " + ftM.ToString(), 10, "2ff", sender.GetPlayer());
-                                //pluginInfo.SendImportantMessageToPlayer(basicTrickChance + "\n" + advancedTrickChance + "\n" + veryAdvancedTrickChance + "\n" + mod1Chance + "\n" + mod2Chance + "\n" + mod3Chance, 10, "2ff", sender.GetPlayer());
-                                //File.AppendAllText(path + sep + "trickLogPrivate.txt", ftM.ToString() + "\n");
                                 return true;
-                            //} 
                         }
                     }
                 }
@@ -340,12 +338,24 @@ namespace RandomServerTricks
             return false;
         }
 
-        private static bool PlayerCommand(string message, PluginPlayer sender)
+        public static bool PlayerCommand(string message, PluginPlayer sender)
         {
-            var myJsonString2 = File.ReadAllText(path + sep + "config.json"); //im lazy
+            var playersIPAdd = sender.GetIPAddress();
+            var myJsonString2 = File.ReadAllText(path + sep + "config.json"); 
             var myJObject2 = JObject.Parse(myJsonString2);
             var genDelay = Int16.Parse(myJObject2["genDelay"].ToString());
+            var enablePublicRush = Int16.Parse(myJObject2["enablePublicRush"].ToString());
+            var rushDelay = Int16.Parse(myJObject2["rushDelay"].ToString());
+            var rushAmount = Int16.Parse(myJObject2["rushAmount"].ToString());
+            var enableCustomTricks = Int16.Parse(myJObject2["enableCustomTricks"].ToString());
+            var adminIPAddrs = myJObject2.SelectTokens("$.adminIPs").Values<string>().ToList();
+            var isAdmin = false;
 
+            if (adminIPAddrs.Contains(playersIPAdd)) {
+                isAdmin = true;
+            }
+
+            //SINGLE RANDOM TRICK
             if (message.ToLower().StartsWith("/rt"))
             {
                 if (stopWatch.IsRunning && stopWatch.Elapsed.Seconds < genDelay)
@@ -376,10 +386,12 @@ namespace RandomServerTricks
                     return true;
                 }
             }
+            //PRIVATE TRICK MODE
             if (message.ToLower().StartsWith("/prt")) {
                 trickGenerator(sender, true);
                 return true;
             }
+            //7 RANDOM TRICKS MODE
             if (message.ToLower().StartsWith("/7rt"))
             {
                 int index = 0;
@@ -389,6 +401,98 @@ namespace RandomServerTricks
                     index++;
                 }
                 pluginInfo.SendImportantMessageToPlayer("Tricks Generated - Have Fun", 10, "f00", sender.GetPlayer());
+                return true;
+            }
+            //RUSH MODE
+            if (message.ToLower().StartsWith("/rush") && enablePublicRush == 1 && isAdmin == false)
+            {
+                int index = 0;
+                while (index < rushAmount)
+                {
+                    trickGenerator(sender, false);
+                    System.Threading.Thread.Sleep((rushDelay * 1000));
+                    index++;
+                }
+                pluginInfo.SendImportantMessageToPlayer("Rush Tricks Generated - Have Fun", 10, "f00", sender.GetPlayer());
+                return true;
+            }
+            if (message.ToLower().StartsWith("/rush") && enablePublicRush == 0 && isAdmin == false)
+            {
+                pluginInfo.SendImportantMessageToPlayer("Public Rush is not enabled", 10, "f00", sender.GetPlayer());
+                return true;
+            }
+            if (message.ToLower().StartsWith("/rush") && isAdmin == true) {
+                int index = 0;
+                while (index < rushAmount)
+                {
+                    trickGenerator(sender, false);
+                    System.Threading.Thread.Sleep((rushDelay * 1000));
+                    index++;
+                }
+                pluginInfo.SendImportantMessageToPlayer(rushAmount +" Rush Tricks Generated - Have Fun", 10, "f00", sender.GetPlayer());
+                return true;
+            }
+
+            //CUSTOM TRICK LIST MODE
+            if (message.ToLower().StartsWith("/tl") && enableCustomTricks == 1 && isAdmin == true)
+            {
+                Regex rg = new Regex(@"^[a-zA-Z\s,]*$");
+                var customTrickSel = message.Substring(3);
+                if (!rg.IsMatch(customTrickSel))
+                {
+                    var myJsonString3 = File.ReadAllText(path + sep + "customTricks.json");
+                    var myJObject3 = JObject.Parse(myJsonString3);
+                    var customTrickList = myJObject3.SelectTokens("$.customTricks").Values<string>().ToList();
+                    var customTrickCount = customTrickList.Count;
+                    if (Int16.Parse(customTrickSel) >= customTrickCount)
+                    {
+                        pluginInfo.SendImportantMessageToPlayer("Invalid Custom Trick List Selection", 10, "f00", sender.GetPlayer());
+                        return true;
+                    }
+                    else
+                    {
+                        pluginInfo.SendServerAnnouncement("Server Trick: " + customTrickList[Int16.Parse(customTrickSel)], 10, "27D");
+                        return true;
+                    }
+                }
+                else if (enableCustomTricks == 0)
+                {
+                    pluginInfo.SendImportantMessageToPlayer("Custom Tricks Lists are not enabled", 10, "f00", sender.GetPlayer());
+                    return true;
+                }
+                else if (isAdmin == false)
+                {
+                    pluginInfo.SendImportantMessageToPlayer("You are not admin", 10, "f00", sender.GetPlayer());
+                    return true;
+                }
+            }
+            else if (enableCustomTricks == 0 && isAdmin == true)
+            {
+                pluginInfo.SendImportantMessageToPlayer("Custom Trick List is not enabled", 10, "f00", sender.GetPlayer());
+                return true;
+            }
+            else {
+                pluginInfo.SendImportantMessageToPlayer("Invalid Custom Trick List Selection", 10, "f00", sender.GetPlayer());
+                return true;
+            }
+                
+            //CUSTOM TRICK BROADCAST
+            if (message.ToLower().StartsWith("/ct") && isAdmin == true)
+            {
+                var customTrick = message.Substring(3);
+                if (customTrick == "")
+                {
+                    pluginInfo.SendImportantMessageToPlayer("Invalid custom trick entry", 10, "f00", sender.GetPlayer());
+                    return true;
+                }
+                else
+                {
+                    pluginInfo.SendServerAnnouncement("Server Trick:" + customTrick, 10, "27D");
+                    return true;
+                }
+            }
+            else if (isAdmin == false) {
+                pluginInfo.SendImportantMessageToPlayer("You are not admin", 10, "f00", sender.GetPlayer());
                 return true;
             }
             return false;
