@@ -14,7 +14,8 @@ namespace RandomServerTricks
     public class Main
     {
         private static Plugin pluginInfo;
-        private static readonly Stopwatch stopWatch = new Stopwatch();
+        private static bool result = true;
+        private static int secondsLeft = 0;
         private static readonly string sep = Path.DirectorySeparatorChar.ToString();
         private static readonly string path = Directory.GetCurrentDirectory() + sep + "Plugins" + sep + "RandomServerTricks";
         private static readonly Random rnd = new Random();
@@ -35,7 +36,7 @@ namespace RandomServerTricks
 
         private static bool OnChatMessage(PluginPlayer player, string message)
         {
-            if (message.ToLower().Contains("racist stuff"))
+            if (message.ToLower().Contains("https://youtu.be/kYtltAFHDtA?t=508"))
             {
                 return false;
             }
@@ -280,6 +281,7 @@ namespace RandomServerTricks
 
                 //the gazelleflip conjecture
                 if (fourthSlot == "Frontside-Gazellespin-" || fourthSlot == "Backside-Gazellespin-" && fifthSlot == "Flip-") {
+                    thirdSlot = "";
                     fifthSlot = "";
                     fourthSlot = fourthSlot.Replace("spin-", "flip-");
                 }
@@ -310,14 +312,18 @@ namespace RandomServerTricks
                         if (isPrivate == false)
                         {
                             if (!File.Exists(path + sep + "trickLog.txt")) {
-                                File.AppendAllText(path + sep + "trickLog.txt", "Kickflip" + "\n");
+                                File.AppendAllText(path + sep + "trickLog.txt", "Kickflip" + "\n" + "Kickflip" + "\n" + "Kickflip" + "\n" + "Kickflip" + "\n" + "Kickflip" + "\n" + "Kickflip" + "\n" + "Kickflip" + "\n" + "Kickflip" + "\n");
                             }
-                            var lastLine = File.ReadLines(path + sep + "trickLog.txt").Last();
-                            if (lastLine == ftM.ToString())
+
+                            //grabs the last 7 tricks generates from tricklog.txt and checks them with the newest generated trick
+                            List<string> last5Tricks = File.ReadLines(path + sep + "trickLog.txt").Reverse().Take(7).ToList();
+
+                            if (last5Tricks.Contains(ftM.ToString()))
                             {
                                 trickGenerator(sender, false);
                                 return true;
-                            } else {
+                            }
+                            else {
                                 pluginInfo.SendServerAnnouncement("Server Trick: " + ftM.ToString(), 10, "0f0");
                                 File.AppendAllText(path + sep + "trickLog.txt", ftM.ToString() + "\n");
                                 return true;
@@ -338,64 +344,119 @@ namespace RandomServerTricks
             return false;
         }
 
+        private static async Task<bool> RmSecondsToGo(int rushDelay) {
+            await Task.Delay((int)(rushDelay * 0.70));
+            pluginInfo.SendServerAnnouncement((Math.Ceiling((rushDelay / 1000) * 0.30)) + " seconds to go.", 10, "f00");
+            return true;
+        }
+
+        //rushMode async rewrite
+        static async Task<bool> rushMode(PluginPlayer sender) {
+            var myJsonString4 = File.ReadAllText(path + sep + "config.json");
+            var myJObject4 = JObject.Parse(myJsonString4);
+            var rushDelay = Int32.Parse(myJObject4["rushDelay"].ToString());
+            var rushAmount = Int16.Parse(myJObject4["rushAmount"].ToString());
+            var showRushCountdown = Int16.Parse(myJObject4["showRushCountdown"].ToString());
+
+            int index = 0;
+            while (index < rushAmount)
+            {
+                if (showRushCountdown == 1)
+                {
+                    if (index == 0)
+                    {
+                        pluginInfo.SendServerAnnouncement("RUSH MODE: " + (rushDelay / 1000) + " second delay. " + rushAmount + " tricks.", 10, "f00");
+                    }
+                    _ = RmSecondsToGo(rushDelay);
+                }
+                trickGenerator(sender, false);
+                await Task.Delay(rushDelay);
+                index++;
+            }
+            pluginInfo.SendServerAnnouncement("RUSH MODE ENDED", 10, "f00");
+            return true;
+        }
+
+        //Random trick async rewrite
+        static async Task<bool> randomTrickMode(PluginPlayer sender, int genDelay, bool isAdmin) {
+
+            if (isAdmin == true)
+            {
+                trickGenerator(sender, false);
+                return true;
+            }
+            else
+            {
+                trickGenerator(sender, false);
+                int index2 = 0;
+                while (index2 < genDelay)
+                {
+                    result = false;
+                    secondsLeft = (genDelay - index2);
+                    await Task.Delay(1000);
+                    index2++;
+                }
+                result = true;
+                return true;
+            }
+        }
+
+
         public static bool PlayerCommand(string message, PluginPlayer sender)
         {
             var playersIPAdd = sender.GetIPAddress();
-            var myJsonString2 = File.ReadAllText(path + sep + "config.json"); 
+            var myJsonString2 = File.ReadAllText(path + sep + "config.json");
             var myJObject2 = JObject.Parse(myJsonString2);
             var genDelay = Int16.Parse(myJObject2["genDelay"].ToString());
             var enablePublicRush = Int16.Parse(myJObject2["enablePublicRush"].ToString());
-            var rushDelay = Int16.Parse(myJObject2["rushDelay"].ToString());
+            var rushDelay = Int32.Parse(myJObject2["rushDelay"].ToString());
             var rushAmount = Int16.Parse(myJObject2["rushAmount"].ToString());
+            var showRushCountdown = Int16.Parse(myJObject2["showRushCountdown"].ToString());
             var enableCustomTricks = Int16.Parse(myJObject2["enableCustomTricks"].ToString());
             var adminIPAddrs = myJObject2.SelectTokens("$.adminIPs").Values<string>().ToList();
             var isAdmin = false;
 
-            if (adminIPAddrs.Contains(playersIPAdd)) {
+            if (adminIPAddrs.Contains(playersIPAdd))
+            {
                 isAdmin = true;
             }
 
-            //SINGLE RANDOM TRICK
-            if (message.ToLower().StartsWith("/rt"))
+            //RANDOM TRICK MODE
+            if (message.ToLower().Equals("/rt"))
             {
-                if (stopWatch.IsRunning && stopWatch.Elapsed.Seconds < genDelay)
+                if (isAdmin == true)
                 {
-                    if (stopWatch.Elapsed.Seconds < genDelay)
-                    {
-                        pluginInfo.SendImportantMessageToPlayer("Wait " + (stopWatch.Elapsed.Seconds - genDelay) + " seconds then try again", 10, "f00", sender.GetPlayer());
-                        //pluginInfo.LogMessage(stopWatch.Elapsed.Seconds.ToString(), ConsoleColor.Blue);
-                        return true;
-                    }
-                    else 
-                    {
-                        if (stopWatch.Elapsed.Seconds > genDelay)
-                        {
-                            stopWatch.Stop();
-                            stopWatch.Reset();
-                            trickGenerator(sender,false);
-                            stopWatch.Start();
-                            return true;
-                        }
-                    }
-                }
-                else {
-                    stopWatch.Stop();
-                    stopWatch.Reset();
-                    trickGenerator(sender,false);
-                    stopWatch.Start();
+                    _ = randomTrickMode(sender, genDelay, true);
                     return true;
                 }
+                else if (isAdmin == false) {
+                    if (result == false)
+                    {
+                        pluginInfo.SendImportantMessageToPlayer("Wait " + secondsLeft + " seconds then try again", 10, "f00", sender.GetPlayer());
+                        return true;
+                    }
+                    else if (result == true)
+                    {
+                        _ = randomTrickMode(sender, genDelay, false);
+                        return true;
+                    }
+                }
+                
             }
+
             //PRIVATE TRICK MODE
-            if (message.ToLower().StartsWith("/prt")) {
+            if (message.ToLower().Equals("/prt"))
+            {
                 trickGenerator(sender, true);
                 return true;
             }
+
             //7 RANDOM TRICKS MODE
-            if (message.ToLower().StartsWith("/7rt"))
+            if (message.ToLower().Equals("/7rt"))
             {
                 int index = 0;
-                while (index < 7) {
+                while (index < 7)
+                {
                     trickGenerator(sender, true);
                     System.Threading.Thread.Sleep(1000);
                     index++;
@@ -403,33 +464,21 @@ namespace RandomServerTricks
                 pluginInfo.SendImportantMessageToPlayer("Tricks Generated - Have Fun", 10, "f00", sender.GetPlayer());
                 return true;
             }
+
             //RUSH MODE
-            if (message.ToLower().StartsWith("/rush") && enablePublicRush == 1 && isAdmin == false)
+            if (message.ToLower().Equals("/rush") && enablePublicRush == 1 && isAdmin == false)
             {
-                int index = 0;
-                while (index < rushAmount)
-                {
-                    trickGenerator(sender, false);
-                    System.Threading.Thread.Sleep((rushDelay * 1000));
-                    index++;
-                }
-                pluginInfo.SendImportantMessageToPlayer("Rush Tricks Generated - Have Fun", 10, "f00", sender.GetPlayer());
+                _ = rushMode(sender);
                 return true;
             }
-            if (message.ToLower().StartsWith("/rush") && enablePublicRush == 0 && isAdmin == false)
+            if (message.ToLower().Equals("/rush") && enablePublicRush == 0 && isAdmin == false)
             {
                 pluginInfo.SendImportantMessageToPlayer("Public Rush is not enabled", 10, "f00", sender.GetPlayer());
                 return true;
             }
-            if (message.ToLower().StartsWith("/rush") && isAdmin == true) {
-                int index = 0;
-                while (index < rushAmount)
-                {
-                    trickGenerator(sender, false);
-                    System.Threading.Thread.Sleep((rushDelay * 1000));
-                    index++;
-                }
-                pluginInfo.SendImportantMessageToPlayer(rushAmount +" Rush Tricks Generated - Have Fun", 10, "f00", sender.GetPlayer());
+            if (message.ToLower().Equals("/rush") && isAdmin == true)
+            {
+                _ = rushMode(sender);
                 return true;
             }
 
@@ -465,17 +514,18 @@ namespace RandomServerTricks
                     pluginInfo.SendImportantMessageToPlayer("You are not admin", 10, "f00", sender.GetPlayer());
                     return true;
                 }
+                else if (enableCustomTricks == 0 && isAdmin == true)
+                {
+                    pluginInfo.SendImportantMessageToPlayer("Custom Trick List is not enabled", 10, "f00", sender.GetPlayer());
+                    return true;
+                }
+                else
+                {
+                    pluginInfo.SendImportantMessageToPlayer("Invalid Custom Trick List Selection", 10, "f00", sender.GetPlayer());
+                    return true;
+                }
             }
-            else if (enableCustomTricks == 0 && isAdmin == true)
-            {
-                pluginInfo.SendImportantMessageToPlayer("Custom Trick List is not enabled", 10, "f00", sender.GetPlayer());
-                return true;
-            }
-            else {
-                pluginInfo.SendImportantMessageToPlayer("Invalid Custom Trick List Selection", 10, "f00", sender.GetPlayer());
-                return true;
-            }
-                
+
             //CUSTOM TRICK BROADCAST
             if (message.ToLower().StartsWith("/ct") && isAdmin == true)
             {
@@ -491,7 +541,8 @@ namespace RandomServerTricks
                     return true;
                 }
             }
-            else if (isAdmin == false) {
+            else if (isAdmin == false)
+            {
                 pluginInfo.SendImportantMessageToPlayer("You are not admin", 10, "f00", sender.GetPlayer());
                 return true;
             }

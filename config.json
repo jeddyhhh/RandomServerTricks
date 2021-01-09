@@ -7,9 +7,10 @@
 "mod3Chance":"75", //DoubleTriple-Kickflip-Heelflip
 "genDelay":"20", //How many seconds between server trick generation
 "enablePublicRush":"0", //Allows any player to initiate rush mode
-"rushDelay":"2", //Seconds between rush tricks
-"rushAmount":"7", //How many tricks are generated in rush mode - higher numbers might disconnect the user
-"enableCustomTricks":"0", //Enables /tl function - pulls custom tricks from customTricks.json - could be used for pre determined sets.
+"rushDelay":"25000", //Milliseconds between rush tricks
+"rushAmount":"10", //How many tricks are generated in rush mode - higher numbers might disconnect the user
+"showRushCountdown":"1", //Shows a warning ~70% through the rush duration
+"enableCustomTricks":"1", //Enables /tl function - pulls custom tricks from customTricks.json - could be used for pre determined sets.
 "adminIPs": [
     "127.0.0.1", //I'd leave this here...
     "192.168.1.16" //replace this with your moderator/admin addresses
@@ -17,6 +18,7 @@
 }
 //Ranges are 1 to 100, anything else will screw things up/potentially crash the server. 
 //An admin IP address is required for the /ct and /tl functions, this is to stop randoms impersonating the server.
+//The /rt function can be used without delay if the user is added to the adminIPs list
 //Default values generate "do-able" tricks, try playiong with the numbers, I'm sure something will break lol.
 //The lower the number, the higher the chance of it coming up. 
 //Private trick generation is limited to 7 because it likes to crash the server if you go over 10. Looking into fixing it.
