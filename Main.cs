@@ -20,6 +20,13 @@ namespace RandomServerTricks
         private static readonly string path = Directory.GetCurrentDirectory() + sep + "Plugins" + sep + "RandomServerTricks";
         private static readonly Random rnd = new Random();
 
+        private static string myJsonString6 = File.ReadAllText(path + sep + "config.json"); //i'm world champion of naming variables
+        private static dynamic colourSettings = JsonConvert.DeserializeObject(myJsonString6);
+        private static string serverTrickColour = colourSettings.serverTrickColour;
+        private static string privateTrickColour = colourSettings.privateTrickColour;
+        private static string customTrickColour = colourSettings.customTrickColour;
+
+
         public static void Load(Plugin info)
         {
             pluginInfo = info;
@@ -64,7 +71,7 @@ namespace RandomServerTricks
                 var myJsonString = File.ReadAllText(path + sep + "tricks.json");
                 var myJObject = JObject.Parse(myJsonString);
 
-                var myJsonString2 = File.ReadAllText(path + sep + "config.json"); //im lazy
+                var myJsonString2 = File.ReadAllText(path + sep + "config.json"); 
                 var myJObject2 = JObject.Parse(myJsonString2);
 
                 //grabs the json objects and converts them to lists
@@ -84,7 +91,6 @@ namespace RandomServerTricks
                 var mod1Chance = Int16.Parse(myJObject2["mod1Chance"].ToString());
                 var mod2Chance = Int16.Parse(myJObject2["mod2Chance"].ToString());
                 var mod3Chance = Int16.Parse(myJObject2["mod3Chance"].ToString());
-                
 
                 //counts entries within catagories
                 var rL = rotationList.Count;
@@ -186,23 +192,27 @@ namespace RandomServerTricks
                         //figures out what a bigspin/biggerspin is - probably wrong
                         if (fourthSlot == "Laser Heel-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                         {
+                            thirdSlot = "";
                             fourthSlot = "Biggerspin-Heel-";
                         }
                         else
                         {
                             if (fourthSlot == "Laser Heel-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
+                                thirdSlot = "";
                                 fourthSlot = "Biggerspin-Heel-";
                             }
                         }
                         if (fourthSlot == "Tre Flip-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                         {
+                            thirdSlot = "";
                             fourthSlot = "360 Hardflip-";
                         }
                         else
                         {
                             if (fourthSlot == "Tre Flip-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
+                                thirdSlot = "";
                                 fourthSlot = "Biggerspin-Flip-";
                             }
                         }
@@ -210,11 +220,13 @@ namespace RandomServerTricks
                         if (fourthSlot == "360 Shuvit-" && thirdSlot == "360-" && secondSlot == "Frontside-")
                         {
                             secondSlot = "";
+                            thirdSlot = "";
                             fourthSlot = "Frontside-Gazellespin-";
                         }
                         if (fourthSlot == "360 Shuvit-" && thirdSlot == "360-" && secondSlot == "Backside-")
                         {
                             secondSlot = "";
+                            thirdSlot = "";
                             fourthSlot = "Backside-Gazellespin-";
                         }
                         //adds direction to 360 shuvits
@@ -316,21 +328,21 @@ namespace RandomServerTricks
                             }
 
                             //grabs the last 7 tricks generates from tricklog.txt and checks them with the newest generated trick
-                            List<string> last5Tricks = File.ReadLines(path + sep + "trickLog.txt").Reverse().Take(7).ToList();
+                            List<string> last7Tricks = File.ReadLines(path + sep + "trickLog.txt").Reverse().Take(7).ToList();
 
-                            if (last5Tricks.Contains(ftM.ToString()))
+                            if (last7Tricks.Contains(ftM.ToString()))
                             {
                                 trickGenerator(sender, false);
                                 return true;
                             }
                             else {
-                                pluginInfo.SendServerAnnouncement("Server Trick: " + ftM.ToString(), 10, "0f0");
+                                pluginInfo.SendServerAnnouncement("Server Trick: " + ftM.ToString(), 10, serverTrickColour);
                                 File.AppendAllText(path + sep + "trickLog.txt", ftM.ToString() + "\n");
                                 return true;
                             }
                         }
                         else if (isPrivate == true) {
-                                pluginInfo.SendImportantMessageToPlayer("Private Trick: " + ftM.ToString(), 10, "2ff", sender.GetPlayer());
+                                pluginInfo.SendImportantMessageToPlayer("Private Trick: " + ftM.ToString(), 10, privateTrickColour, sender.GetPlayer());
                                 return true;
                         }
                     }
@@ -338,7 +350,7 @@ namespace RandomServerTricks
             }
             else
             {
-                pluginInfo.SendImportantMessageToPlayer("tricks.json does not exist or is not loading", 10, "f00", sender.GetPlayer());
+                pluginInfo.SendImportantMessageToPlayer("tricks.json does not exist or is not loading", 10, "f00", sender.GetPlayer()); //RED
                 return true;
             }
             return false;
@@ -365,7 +377,7 @@ namespace RandomServerTricks
                 {
                     if (index == 0)
                     {
-                        pluginInfo.SendServerAnnouncement("RUSH MODE: " + (rushDelay / 1000) + " second delay. " + rushAmount + " tricks.", 10, "f00");
+                        pluginInfo.SendServerAnnouncement("RUSH MODE: " + (rushDelay / 1000) + " second delay. " + rushAmount + " tricks.", 10, "f93");
                     }
                     _ = RmSecondsToGo(rushDelay);
                 }
@@ -373,7 +385,7 @@ namespace RandomServerTricks
                 await Task.Delay(rushDelay);
                 index++;
             }
-            pluginInfo.SendServerAnnouncement("RUSH MODE ENDED", 10, "f00");
+            pluginInfo.SendServerAnnouncement("RUSH MODE ENDED", 10, "f93");
             return true;
         }
 
@@ -500,7 +512,7 @@ namespace RandomServerTricks
                     }
                     else
                     {
-                        pluginInfo.SendServerAnnouncement("Server Trick: " + customTrickList[Int16.Parse(customTrickSel)], 10, "27D");
+                        pluginInfo.SendServerAnnouncement("Server Trick: " + customTrickList[Int16.Parse(customTrickSel)], 10, customTrickColour);
                         return true;
                     }
                 }
@@ -537,7 +549,7 @@ namespace RandomServerTricks
                 }
                 else
                 {
-                    pluginInfo.SendServerAnnouncement("Server Trick:" + customTrick, 10, "27D");
+                    pluginInfo.SendServerAnnouncement("Server Trick:" + customTrick, 10, customTrickColour);
                     return true;
                 }
             }

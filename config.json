@@ -11,6 +11,9 @@
 "rushAmount":"10", //How many tricks are generated in rush mode - higher numbers might disconnect the user
 "showRushCountdown":"1", //Shows a warning ~70% through the rush duration
 "enableCustomTricks":"1", //Enables /tl function - pulls custom tricks from customTricks.json - could be used for pre determined sets.
+"serverTrickColour":"9f9", //this is also the Rush mode colour, I might try seperating them.
+"privateTrickColour":"de0", //lower-case only - get safe colour codes from https://www.december.com/html/spec/colorsafe.html
+"customTrickColour":"f99",  //convert those colours like this (#DDEE00 = de0)
 "adminIPs": [
     "127.0.0.1", //I'd leave this here...
     "192.168.1.16" //replace this with your moderator/admin addresses
