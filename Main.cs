@@ -276,11 +276,7 @@ namespace RandomServerTricks
                 }
 
                 //correcting for biggerspin flip/heel
-                if (fourthSlot == "Biggerspin-" || fourthSlot == "Bigspin-" || fourthSlot == "Biggerspin-Heel-" || fourthSlot == "Biggerspin-Flip-" || fourthSlot == "Shuvit-")
-                {
-                    thirdSlot = "";
-                }
-                if (fourthSlot == "360 Shuvit-" || fourthSlot == "Bigspin-Heel-" || fourthSlot == "Bigspin-Flip-")
+                if (fourthSlot == "Biggerspin-" || fourthSlot == "Bigspin-" || fourthSlot == "Biggerspin-Heel-" || fourthSlot == "Biggerspin-Flip-" || fourthSlot == "Shuvit-" || fourthSlot == "Bigspin-Heel-" || fourthSlot == "Bigspin-Flip-")
                 {
                     thirdSlot = "";
                 }
@@ -290,6 +286,12 @@ namespace RandomServerTricks
                     secondSlot = "";
                     fourthSlot = Mod2List[rnd.Next(0, Mod2L)].ToString() + " Shuvit-"; 
                 }
+                if (fourthSlot == "360 Shuvit-") {
+                    secondSlot = "";
+                    thirdSlot = "";
+                    secondSlot = Mod2List[rnd.Next(0, Mod2L)].ToString() + "-";
+                }
+
 
                 //the gazelleflip conjecture
                 if (fourthSlot == "Frontside-Gazellespin-" || fourthSlot == "Backside-Gazellespin-" && fifthSlot == "Flip-") {
