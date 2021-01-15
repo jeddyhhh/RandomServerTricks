@@ -1,17 +1,18 @@
 {
 "basicTrickChance":"35",
-"advancedTrickChance":"50",
-"veryAdvancedTrickChance":"50",
-"mod1Chance":"50", //Switch-Fakie-Nollie 
+"advancedTrickChance":"40",
+"veryAdvancedTrickChance":"60",
+"mod1Chance":"75", //Switch-Fakie-Nollie 
 "mod2Chance":"85", //Revert-Manual-NoseManual
-"mod3Chance":"75", //DoubleTriple-Kickflip-Heelflip
+"mod3Chance":"90", //DoubleTriple-Kickflip-Heelflip
 "genDelay":"20", //How many seconds between server trick generation
+"duplicateThresh":"25", //How many past tricks should the generator look through to make sure of no doubles.
 "enablePublicRush":"0", //Allows any player to initiate rush mode
 "rushDelay":"25000", //Milliseconds between rush tricks
 "rushAmount":"10", //How many tricks are generated in rush mode - higher numbers might disconnect the user
-"showRushCountdown":"1", //Shows a warning ~70% through the rush duration
+"showRushCountdown":"0", //Shows a warning ~70% through the rush duration
 "enableCustomTricks":"1", //Enables /tl function - pulls custom tricks from customTricks.json - could be used for pre determined sets.
-"serverTrickColour":"9f9", //this is also the Rush mode colour, I might try seperating them.
+"serverTrickColour":"396", //this is also the Rush mode colour, I might try seperating them.
 "privateTrickColour":"de0", //lower-case only - get safe colour codes from https://www.december.com/html/spec/colorsafe.html
 "customTrickColour":"f99",  //convert those colours like this (#DDEE00 = de0)
 "adminIPs": [
