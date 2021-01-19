@@ -1,10 +1,10 @@
 {
 "basicTrickChance":"35",
 "advancedTrickChance":"40",
-"veryAdvancedTrickChance":"60",
-"mod1Chance":"75", //Switch-Fakie-Nollie 
-"mod2Chance":"85", //Revert-Manual-NoseManual
-"mod3Chance":"90", //DoubleTriple-Kickflip-Heelflip
+"veryAdvancedTrickChance":"90",
+"mod1Chance":"80", //Switch-Fakie-Nollie 
+"mod2Chance":"90", //Revert-Manual-NoseManual
+"mod3Chance":"98", //DoubleTriple-Kickflip-Heelflip
 "genDelay":"20", //How many seconds between server trick generation
 "duplicateThresh":"25", //How many past tricks should the generator look through to make sure of no doubles.
 "enablePublicRush":"0", //Allows any player to initiate rush mode

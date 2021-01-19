@@ -16,6 +16,7 @@ namespace RandomServerTricks
         private static Plugin pluginInfo;
         private static bool result = true;
         private static int secondsLeft = 0;
+        private static int rushIndex = 0;
         private static readonly string sep = Path.DirectorySeparatorChar.ToString();
         private static readonly string path = Directory.GetCurrentDirectory() + sep + "Plugins" + sep + "RandomServerTricks";
         private static readonly Random rnd = new Random();
@@ -133,7 +134,7 @@ namespace RandomServerTricks
                     //gives a lower chance of 540 coming up
                     if (thirdSlot == "540-")
                     {
-                        if (rnd.Next(0, 100) > 75)
+                        if (rnd.Next(0, 100) > 98)
                         {
                             thirdSlot = "540-";
                         }
@@ -272,6 +273,14 @@ namespace RandomServerTricks
 
                 //TRICK CORRECTIONS
 
+                //switch manuals
+                if (firstSlot == "Switch-" && fifthSlot == "To Nose Manual-") {
+                    fifthSlot = "To Switch Manual-";
+                }
+                if (firstSlot == "Switch-" && fifthSlot == "To Manual-") {
+                    fifthSlot = "To Switch Nose Manual-";
+                }
+
                 //ghetto birds
                 if (firstSlot == "Fakie-" && secondSlot == "Backside-" && thirdSlot == "180-" && fourthSlot == "Hardflip-") {
                     firstSlot = "";
@@ -306,7 +315,7 @@ namespace RandomServerTricks
                     fourthSlot = fourthSlot.Replace("spin-", "flip-");
                 }
 
-                //corrects switch manuals, i think.
+                //No fucking clue what this does anything tbh, imma leave it tho.
                 if ((secondSlot == "180-" || firstSlot == "Fakie") && (fifthSlot == "To Manual-" || fifthSlot == "To Nose Manual-")) {
                     var tempFifthSlot = fifthSlot;
                     fifthSlot = "Switch " + tempFifthSlot.Substring(3);
@@ -385,20 +394,25 @@ namespace RandomServerTricks
             var showRushCountdown = Int16.Parse(myJObject4["showRushCountdown"].ToString());
 
             int index = 0;
-            while (index < rushAmount)
+            while (index < (rushAmount - 1))
             {
                 if (index == 0)
                 {
                     pluginInfo.SendServerAnnouncement("RUSH MODE: " + (rushDelay / 1000) + " second delay. " + rushAmount + " tricks.", 10, "c30");
+                    trickGenerator(sender, false);
                 }
                 index++;
+                rushIndex = 1;
                 if (showRushCountdown == 1 && index != rushAmount)
                 {
                     _ = RmSecondsToGo(rushDelay);
                 }
+                if (index != rushAmount) {
+                    await Task.Delay(rushDelay);
+                }
                 trickGenerator(sender, false);
-                await Task.Delay(rushDelay);
             }
+            rushIndex = 0;
             pluginInfo.SendServerAnnouncement("RUSH MODE ENDED", 10, "c30");
             return true;
         }
@@ -494,8 +508,16 @@ namespace RandomServerTricks
             //RUSH MODE
             if (message.ToLower().Equals("/rush") && enablePublicRush == 1 && isAdmin == false)
             {
-                _ = rushMode(sender);
-                return true;
+                if (rushIndex == 0)
+                {
+                    _ = rushMode(sender);
+                    return true;
+                }
+                else {
+                    pluginInfo.SendImportantMessageToPlayer("Please wait for RUSH MODE to end.", 10, "f00", sender.GetPlayer());
+                    return true;
+                }
+                
             }
             if (message.ToLower().Equals("/rush") && enablePublicRush == 0 && isAdmin == false)
             {
@@ -504,8 +526,16 @@ namespace RandomServerTricks
             }
             if (message.ToLower().Equals("/rush") && isAdmin == true)
             {
-                _ = rushMode(sender);
-                return true;
+                if (rushIndex == 0)
+                {
+                    _ = rushMode(sender);
+                    return true;
+                }
+                else
+                {
+                    pluginInfo.SendImportantMessageToPlayer("Please wait for RUSH MODE to end.", 10, "f00", sender.GetPlayer());
+                    return true;
+                }
             }
 
             //CUSTOM TRICK LIST MODE

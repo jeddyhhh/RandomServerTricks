@@ -2,7 +2,7 @@
 "Rotation": [
     "180",
     "360",
-    "540"
+    "540" //You can remove this if you want, there is now a very, very slim chance a 540 will come up after the 10.0.0 update.
   ],
 "bTrick": [
     "Kickflip",
