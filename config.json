@@ -1,15 +1,15 @@
 {
 "basicTrickChance":"35",
-"advancedTrickChance":"40",
+"advancedTrickChance":"45",
 "veryAdvancedTrickChance":"90",
-"mod1Chance":"80", //Switch-Fakie-Nollie 
+"mod1Chance":"90", //Switch-Fakie-Nollie 
 "mod2Chance":"90", //Revert-Manual-NoseManual
-"mod3Chance":"98", //DoubleTriple-Kickflip-Heelflip
-"genDelay":"20", //How many seconds between server trick generation
-"duplicateThresh":"25", //How many past tricks should the generator look through to make sure of no doubles.
-"enablePublicRush":"0", //Allows any player to initiate rush mode
-"rushDelay":"25000", //Milliseconds between rush tricks
-"rushAmount":"10", //How many tricks are generated in rush mode - higher numbers might disconnect the user
+"mod3Chance":"98", //DoubleTriple-Kickflip-Heelflip - set to 100 to disable
+"genDelay":"3", //How many seconds between server trick generation
+"duplicateThresh":"20", //How many past tricks should the generator look through to make sure of no doubles.
+"enablePublicRush":"1", //Allows any player to initiate rush mode
+"rushDelay":"2000", //Milliseconds between rush tricks
+"rushAmount":"10000", //How many tricks are generated in rush mode - higher numbers might disconnect the user
 "showRushCountdown":"0", //Shows a warning ~70% through the rush duration
 "enableCustomTricks":"1", //Enables /tl function - pulls custom tricks from customTricks.json - could be used for pre determined sets.
 "serverTrickColour":"396", //this is also the Rush mode colour, I might try seperating them.

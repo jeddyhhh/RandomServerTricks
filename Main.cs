@@ -19,7 +19,6 @@ namespace RandomServerTricks
         private static int rushIndex = 0;
         private static readonly string sep = Path.DirectorySeparatorChar.ToString();
         private static readonly string path = Directory.GetCurrentDirectory() + sep + "Plugins" + sep + "RandomServerTricks";
-        private static readonly Random rnd = new Random();
 
         private static string myJsonString6 = File.ReadAllText(path + sep + "config.json"); //i'm world champion of naming variables
         private static dynamic modSettings = JsonConvert.DeserializeObject(myJsonString6);
@@ -27,6 +26,8 @@ namespace RandomServerTricks
         private static string privateTrickColour = modSettings.privateTrickColour;
         private static string customTrickColour = modSettings.customTrickColour;
         private static int duplicateThresh = modSettings.duplicateThresh;
+        private static int duplicateThresh2 = modSettings.duplicateThresh;
+        private static int rushDelay = modSettings.rushDelay;
 
 
         public static void Load(Plugin info)
@@ -67,6 +68,7 @@ namespace RandomServerTricks
 
         private static bool trickGenerator(PluginPlayer sender, bool isPrivate)
         {
+            Random rnd = new Random();
             if (File.Exists(path + sep + "tricks.json"))
             {
                 //reads tricks.json file and creates a object with the values loaded.
@@ -134,7 +136,7 @@ namespace RandomServerTricks
                     //gives a lower chance of 540 coming up
                     if (thirdSlot == "540-")
                     {
-                        if (rnd.Next(0, 100) > 98)
+                        if (rnd.Next(0, 100) > 99)
                         {
                             thirdSlot = "540-";
                         }
@@ -171,7 +173,7 @@ namespace RandomServerTricks
                         }
                         else
                         {
-                            if (fourthSlot == "Shuvit-" && thirdSlot == "360-" && secondSlot == "Frontside-" || secondSlot == "Backside-")
+                            if (fourthSlot == "360 Shuvit-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                             {
                                 if (rnd.Next(0, 100) < 50)
                                 {
@@ -192,33 +194,18 @@ namespace RandomServerTricks
                     {
                         fourthSlot = aTrickList[rnd.Next(0, aTL)].ToString() + "-";
 
-                        //figures out what a bigspin/biggerspin is - probably wrong
-                        if (fourthSlot == "Laser Heel-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
+                        //figures out what a bigspin/biggerspin-flip is - probably wrong
+                        if (fourthSlot == "Laser Heel-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                         {
                             thirdSlot = "";
                             fourthSlot = "Biggerspin-Heel-";
                         }
-                        else
-                        {
-                            if (fourthSlot == "Laser Heel-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
-                            {
-                                thirdSlot = "";
-                                fourthSlot = "Biggerspin-Heel-";
-                            }
-                        }
-                        if (fourthSlot == "Tre Flip-" && thirdSlot == "360-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
+                        if (fourthSlot == "Tre Flip-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
                         {
                             thirdSlot = "";
-                            fourthSlot = "360 Hardflip-";
+                            fourthSlot = "Biggerspin-Flip-";
                         }
-                        else
-                        {
-                            if (fourthSlot == "Tre Flip-" && thirdSlot == "180-" && (secondSlot == "Frontside-" || secondSlot == "Backside-"))
-                            {
-                                thirdSlot = "";
-                                fourthSlot = "Biggerspin-Flip-";
-                            }
-                        }
+
                         //the gazelle hypothesis
                         if (fourthSlot == "360 Shuvit-" && thirdSlot == "360-" && secondSlot == "Frontside-")
                         {
@@ -267,7 +254,7 @@ namespace RandomServerTricks
                     }
                     if (fourthSlot == "Frontside-Gazellespin-" || fourthSlot == "Backside-Gazellespin-")
                     {
-                        fifthSlot = Mod3List[rnd.Next(0, Mod3L)].ToString() + "-";
+                        fifthSlot = Mod5List[rnd.Next(0, Mod5L)].ToString() + "-";
                     }
                 }
 
@@ -279,6 +266,26 @@ namespace RandomServerTricks
                 }
                 if (firstSlot == "Switch-" && fifthSlot == "To Manual-") {
                     fifthSlot = "To Switch Nose Manual-";
+                }
+                if ((secondSlot == "Backside-" || secondSlot == "Frontside") && thirdSlot == "180-" && fifthSlot == "To Manual-")
+                {
+                    fifthSlot = "To Switch Manual-";
+                }
+                if ((secondSlot == "Backside-" || secondSlot == "Frontside") && thirdSlot == "180-" && fifthSlot == "To Nose Manual-")
+                {
+                    fifthSlot = "To Switch Nose Manual-";
+                }
+                if (firstSlot == "Fakie-" && fifthSlot == "To Manual-") {
+                    fifthSlot = "To Switch Manual-";
+                }
+                if (firstSlot == "Fakie-" && fifthSlot == "To Nose Manual-")
+                {
+                    fifthSlot = "To Switch Nose Manual-";
+                }
+
+                //give 360 shuvits direction
+                if (fourthSlot == "360 Shuvit-") { 
+                    fourthSlot = Mod2List[rnd.Next(0, Mod2L)].ToString() + " 360 Shuvit-";
                 }
 
                 //ghetto birds
@@ -303,7 +310,7 @@ namespace RandomServerTricks
                 }
 
                 //shuvit variations
-                if (fourthSlot == "Shuvit-") {
+                if (fourthSlot == "Shuvit-" && (fifthSlot != "To Switch Nose Manual-" || fifthSlot == "To Switch Manual-")) {
                     secondSlot = "";
                     fourthSlot = Mod2List[rnd.Next(0, Mod2L)].ToString() + " Shuvit-"; 
                 }
@@ -316,7 +323,7 @@ namespace RandomServerTricks
                 }
 
                 //No fucking clue what this does anything tbh, imma leave it tho.
-                if ((secondSlot == "180-" || firstSlot == "Fakie") && (fifthSlot == "To Manual-" || fifthSlot == "To Nose Manual-")) {
+                if ((thirdSlot == "180-" || firstSlot == "Fakie") && (fifthSlot == "To Manual-" || fifthSlot == "To Nose Manual-")) {
                     var tempFifthSlot = fifthSlot;
                     fifthSlot = "Switch " + tempFifthSlot.Substring(3);
                 }
@@ -341,24 +348,43 @@ namespace RandomServerTricks
                         if (isPrivate == false)
                         {
                             if (!File.Exists(path + sep + "trickLog.txt")) {
-                                File.AppendAllText(path + sep + "trickLog.txt", "Kickflip" + "\n");
+                                File.AppendAllText(path + sep + "trickLog.txt", "NULL" + "\n");
+                            }
+
+                            if (!File.Exists(path + sep + "dup.txt"))
+                            {
+                                File.AppendAllText(path + sep + "dup.txt", "NULL" + "\n");
                             }
 
                             var pastTrickCount = File.ReadLines(path + sep + "trickLog.txt").Count();
 
-                            if (duplicateThresh < pastTrickCount) {
-                                duplicateThresh = pastTrickCount - 1;
-                            }
-
                             //grabs the last tricks generates from tricklog.txt and checks them with the newest generated trick
                             List<string> lastTricks = File.ReadLines(path + sep + "trickLog.txt").Reverse().Take(duplicateThresh).ToList();
+                            List<string> lastTricks2 = File.ReadLines(path + sep + "dup.txt").ToList();
+                            List<string> lastDup = File.ReadLines(path + sep + "dup.txt").Reverse().Take(1).ToList();
+                            int lTC = lastTricks2.Count;
 
                             if (lastTricks.Contains(ftM.ToString()))
                             {
-                                trickGenerator(sender, false);
-                                return true;
+                                //File.AppendAllText(path + sep + "dup.txt", ftM.ToString() + "\n");
+                                if (!lastDup.Contains(ftM.ToString()))
+                                {
+                                    Random rnd2 = new Random();
+                                    System.Threading.Thread.Sleep(rnd2.Next(0, 200));
+                                    trickGenerator(sender, false);
+                                    File.AppendAllText(path + sep + "dup.txt", ftM.ToString() + "\n");
+                                }
+                                else {
+                                    trickGenerator(sender, false);
+                                    return true;
+                                }
                             }
                             else {
+                                if (lTC > duplicateThresh2 - 1) {
+                                    //pluginInfo.LogMessage(lTC.ToString(), ConsoleColor.Blue);
+                                    File.Delete(path + sep + "dup.txt");
+                                }
+                                //pluginInfo.LogMessage(lTC.ToString(), ConsoleColor.Blue);
                                 pluginInfo.SendServerAnnouncement("Server Trick: " + ftM.ToString(), 10, serverTrickColour);
                                 File.AppendAllText(path + sep + "trickLog.txt", ftM.ToString() + "\n");
                                 return true;
@@ -393,13 +419,14 @@ namespace RandomServerTricks
             var rushAmount = Int16.Parse(myJObject4["rushAmount"].ToString());
             var showRushCountdown = Int16.Parse(myJObject4["showRushCountdown"].ToString());
 
-            int index = 0;
-            while (index < (rushAmount - 1))
+            int index = 1;
+            while (index < rushAmount)
             {
-                if (index == 0)
+                if (index == 1)
                 {
                     pluginInfo.SendServerAnnouncement("RUSH MODE: " + (rushDelay / 1000) + " second delay. " + rushAmount + " tricks.", 10, "c30");
                     trickGenerator(sender, false);
+                    await Task.Delay(rushDelay);
                 }
                 index++;
                 rushIndex = 1;
@@ -407,11 +434,15 @@ namespace RandomServerTricks
                 {
                     _ = RmSecondsToGo(rushDelay);
                 }
-                if (index != rushAmount) {
+                if (index != 1) {
                     await Task.Delay(rushDelay);
+                    trickGenerator(sender, false);
                 }
-                trickGenerator(sender, false);
             }
+            await Task.Delay(rushDelay);
+            pluginInfo.SendServerAnnouncement("Last trick!", 10, "c6f");
+            trickGenerator(sender, false);
+            await Task.Delay(rushDelay);
             rushIndex = 0;
             pluginInfo.SendServerAnnouncement("RUSH MODE ENDED", 10, "c30");
             return true;
